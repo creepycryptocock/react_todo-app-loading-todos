@@ -18,7 +18,7 @@ export function getFilteredTodos(
       return currentTodos.filter(todo => !todo.completed);
     case Filter.Completed:
       return currentTodos.filter(todo => todo.completed);
-    case Filter.All:
+    // case Filter.All:
     default:
       return currentTodos;
   }
