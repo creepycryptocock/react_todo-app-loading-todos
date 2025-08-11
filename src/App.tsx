@@ -1,13 +1,14 @@
+/* eslint-disable import/extensions */
 import React, { useEffect, useState } from 'react';
 import { UserWarning } from './UserWarning';
 import * as todoService from './api/todos';
-import { TodoHeader } from './components/TodoHeader';
-import { TodoList } from './components/TodoList';
-import { TodoFooter } from './components/TodoFooter';
-import { ErrorNotification } from './components/ErrorNotification';
-import { Todo } from './types/Todo';
-import { ErrorType } from './types/ErrorType';
-import { Filter } from './types/Filter';
+import { TodoHeader } from './components/TodoHeader.tsx';
+import { TodoList } from './components/TodoList.tsx';
+import { TodoFooter } from './components/TodoFooter.tsx';
+import { ErrorNotification } from './components/ErrorNotification.tsx';
+import { Todo } from './types/Todo.ts';
+import { ErrorType } from './types/ErrorType.ts';
+import { Filter } from './types/Filter.ts';
 
 export function getFilteredTodos(
   currentTodos: Todo[],
@@ -29,6 +30,7 @@ export const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<ErrorType | ''>('');
   const [filter, setFilter] = useState<Filter>(Filter.All);
+  const [disabled, setDisabled] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -51,11 +53,14 @@ export const App: React.FC = () => {
     setError('');
 
     try {
+      setDisabled(true);
       const newTodo = await todoService.addTodo(title.trim());
 
       setTodos(currentTodos => [...currentTodos, newTodo]);
     } catch {
       setError('Unable to add a todo');
+    } finally {
+      setDisabled(false);
     }
   };
 
@@ -108,7 +113,7 @@ export const App: React.FC = () => {
       <h1 className="todoapp__title">todos</h1>
 
       <div className="todoapp__content">
-        <TodoHeader onAdd={handleAddTodo} todos={todos} />
+        <TodoHeader onAdd={handleAddTodo} todos={todos} disabled={disabled} />
         <TodoList
           todos={visibleTodos}
           toggleTodo={toggleTodo}
