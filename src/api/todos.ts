@@ -18,3 +18,7 @@ export function addTodo(title: string) {
 export function updateCompleted(todoId: number, completed: boolean) {
   return client.patch<Todo>(`/todos/${todoId}`, { completed });
 }
+
+export function deleteTodo(todoId: number) {
+  return client.delete(`/todos/${todoId}`);
+}

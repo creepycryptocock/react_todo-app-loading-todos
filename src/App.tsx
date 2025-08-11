@@ -74,6 +74,29 @@ export const App: React.FC = () => {
     }
   };
 
+  const deleteTodo = async (todoId: number) => {
+    try {
+      await todoService.deleteTodo(todoId);
+      setTodos(prevTodos => prevTodos.filter(t => t.id !== todoId));
+    } catch {
+      setError('Unable to delete a todo');
+    }
+  };
+
+  const onClearCompleted = async () => {
+    try {
+      const completedTodos = getFilteredTodos(todos, Filter.Completed);
+
+      await Promise.all(
+        completedTodos.map(todo => todoService.deleteTodo(todo.id)),
+      );
+
+      setTodos(currentTodos => currentTodos.filter(todo => !todo.completed));
+    } catch {
+      setError('Unable to delete a todo');
+    }
+  };
+
   if (!todoService.USER_ID) {
     return <UserWarning />;
   }
@@ -90,12 +113,14 @@ export const App: React.FC = () => {
           todos={visibleTodos}
           toggleTodo={toggleTodo}
           isLoading={isLoading}
+          deleteTodo={deleteTodo}
         />
         {todos.length !== 0 && (
           <TodoFooter
             todos={todos}
             currentFilter={filter}
             onFilterChange={setFilter}
+            onClearCompleted={onClearCompleted}
           />
         )}
       </div>
